@@ -146,6 +146,31 @@
     border-radius: 1rem;
 }
 
+.popup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    background-color: #678fee;
+}
+
+.cabecalho {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 8rem;
+}
+
+.hab_alt {
+    display: flex;
+    justify-content: space-around;
+    width: 90%;
+    height: 10rem;
+    align-items: center;
+}
+
 @media screen and (min-width: 380px) {
     .pokemons {
         grid-template-columns: 1fr 1fr;
