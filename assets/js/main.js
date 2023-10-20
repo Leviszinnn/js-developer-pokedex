@@ -7,14 +7,13 @@ const limit = 10
 let offset = 0;
 
 function convertPokemonToLi(pokemon) {
-    console.log(pokemon)
     return `
-        <li onclick="teste(this.id)" id="${pokemon.name}" class="pokemon ${pokemon.type}">
+        <li onclick="teste(this.id)" id="${pokemon.number}" class="pokemon ${pokemon.type}">
             <span class="number">#${pokemon.number}</span>
             <span class="name">${pokemon.name}</span>
             <div class="detail">
                 <ol class="types">
-                    ${pokemon.types.map((type) => `<li class="type ${type}">${type}</li>`).join('')}
+                    ${pokemon.types?.map((type) => `<li class="type ${type}">${type}</li>`).join('')}
                 </ol>
                 <img src="${pokemon.photo}"alt="${pokemon.name}">
             </div>
@@ -22,9 +21,24 @@ function convertPokemonToLi(pokemon) {
     `
 }
 
+pokemonList.addEventListener('click', function(e) {
+    return idPokemon = e.target.id
+})  
+
+function loadPopup(idPokemon) {
+    var armz = parseInt(idPokemon)
+    console.log(armz)
+
+    pokeApi.getPokemons(offset, limit).then((pokemons = []) => {
+        const newHtml2 = convertPokemonToPopup(pokemons[armz - 1])        
+        popup.innerHTML = newHtml2
+    }
+    )
+}
 
 function convertPokemonToPopup(pokemon) {
     return `
+            <div class="popup ${pokemon.type}" id="popup">
             <div class="cabecalho">
                 <div class="nome_tipo">
                     <h2>Nome: ${pokemon.name}</h2>
@@ -35,43 +49,51 @@ function convertPokemonToPopup(pokemon) {
                 </div>
             </div>
             <div class="img_pokedex">
-                <img src="${pokemon.photo}">
+                <img class="imgPokemon" src="${pokemon.photo}">
             </div>
             <div class="hab_alt">
                 <div class="habilidades">
-
+                ${pokemon.Abilities.map((ability) => `<h3>Tipo: ${ability}</h3>`).join('')}
                 </div>
                 <div class="altura_peso">
-                    <h3>Altura: ${pokemon.Height}</h3>
-                    <h3>Peso: ${pokemon.Weight}</h3>
+                    <h3>Altura: ${pokemon.Height} M</h3>
+                    <h3>Peso: ${pokemon.Weight} KG</h3>
                 </div>
+            </div>
             </div>
     `
 }
 
-function loadPopup() {
-    pokeApi.getPokemons(offset, limit).then((pokemons = []) => {
-        const newHtml2 = pokemons.map((pokemon) => convertPokemonToPopup(pokemon)).join('')
-        
-        popup.innerHTML += newHtml2
-    }
-    )
-}
-
-function teste() {
-    loadPopup()
+function teste(id) {
+    loadPopup(id)
 }
 
 function loadPokemonItens(offset, limit) {
     pokeApi.getPokemons(offset, limit).then((pokemons = []) => {
-        const newHtml = pokemons.map(convertPokemonToLi).join('')
-        pokemonList.innerHTML += newHtml
+        console.log("pokemons iniciais", pokemons)
+        if (pokemons.length != 0) {
+            pokeApi.getPokemons(offset, limit).then((pokemonsN = []) => {
+                console.log("pokemons novos", pokemonsN)
+                pokemonsN.map((pokemonN) => {
+                    pokemons.push(pokemonN)
+                })
+                const newhtml3 = pokemons.map(convertPokemonToLi).join('')
+                pokemonList.innerHTML += newhtml3
+                console.log("array com Push", pokemons)
+            })
+        }
+        else {
+            console.log("array inicial",pokemons)
+            const newHtml = pokemons.map(convertPokemonToLi).join('')
+            pokemonList.innerHTML += newHtml
+        }
+        offset = offset + 10
+        limit = limit + 10
     }
     )
 }
 
 loadPokemonItens(offset, limit)
-
 
 loadMoreButton.addEventListener('click', () => {
     offset += limit
@@ -79,7 +101,7 @@ loadMoreButton.addEventListener('click', () => {
 
     if (qtdRecordsWithNexPage >= maxRecords) {
         const newLimit = maxRecords - offset
-        loadPokemonItens(offset, newLimit)
+        loadPokemonItens(offset, newLimit + 10)
 
         loadMoreButton.parentElement.removeChild(loadMoreButton)
     } else {

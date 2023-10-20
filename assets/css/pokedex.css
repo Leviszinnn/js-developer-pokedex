@@ -152,7 +152,8 @@
     justify-content: center;
     align-items: center;
     border-radius: 1rem;
-    background-color: #678fee;
+    width: 90%;
+    margin: 0;
 }
 
 .cabecalho {
@@ -169,6 +170,11 @@
     width: 90%;
     height: 10rem;
     align-items: center;
+}
+
+.imgPokemon {
+    width: 15rem;
+    height: 10rem;
 }
 
 @media screen and (min-width: 380px) {
