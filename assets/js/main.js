@@ -3,7 +3,7 @@ const loadMoreButton = document.getElementById('loadMoreButton')
 const popup = document.getElementById('popup')
 
 const maxRecords = 151
-const limit = 10
+const limit = 151
 let offset = 0;
 
 function convertPokemonToLi(pokemon) {
@@ -21,22 +21,23 @@ function convertPokemonToLi(pokemon) {
     `
 }
 
-pokemonList.addEventListener('click', function(e) {
+pokemonList.addEventListener('click', function (e) {
     return idPokemon = e.target.id
-})  
+})
 
 function loadPopup(idPokemon) {
     var armz = parseInt(idPokemon)
     console.log(armz)
 
     pokeApi.getPokemons(offset, limit).then((pokemons = []) => {
-        const newHtml2 = convertPokemonToPopup(pokemons[armz - 1])        
+        const newHtml2 = convertPokemonToPopup(pokemons[armz - 1])
         popup.innerHTML = newHtml2
     }
     )
 }
 
 function convertPokemonToPopup(pokemon) {
+    window.scrollTo(0, 0)
     return `
             <div class="popup ${pokemon.type}" id="popup">
             <div class="cabecalho">
@@ -71,24 +72,9 @@ function teste(id) {
 function loadPokemonItens(offset, limit) {
     pokeApi.getPokemons(offset, limit).then((pokemons = []) => {
         console.log("pokemons iniciais", pokemons)
-        if (pokemons.length != 0) {
-            pokeApi.getPokemons(offset, limit).then((pokemonsN = []) => {
-                console.log("pokemons novos", pokemonsN)
-                pokemonsN.map((pokemonN) => {
-                    pokemons.push(pokemonN)
-                })
-                const newhtml3 = pokemons.map(convertPokemonToLi).join('')
-                pokemonList.innerHTML += newhtml3
-                console.log("array com Push", pokemons)
-            })
-        }
-        else {
-            console.log("array inicial",pokemons)
-            const newHtml = pokemons.map(convertPokemonToLi).join('')
-            pokemonList.innerHTML += newHtml
-        }
-        offset = offset + 10
-        limit = limit + 10
+
+        const newHtml = pokemons.map(convertPokemonToLi).join('')
+        pokemonList.innerHTML += newHtml
     }
     )
 }
@@ -96,15 +82,15 @@ function loadPokemonItens(offset, limit) {
 loadPokemonItens(offset, limit)
 
 loadMoreButton.addEventListener('click', () => {
-    offset += limit
     const qtdRecordsWithNexPage = offset + limit
 
-    if (qtdRecordsWithNexPage >= maxRecords) {
+    if (qtdRecordsWithNexPage > maxRecords) {
+        console.log("entrou no if e carregou mais")
         const newLimit = maxRecords - offset
         loadPokemonItens(offset, newLimit + 10)
 
-        loadMoreButton.parentElement.removeChild(loadMoreButton)
     } else {
-        loadPokemonItens(offset, limit)
+        console.log("sem adicionar")
+        loadMoreButton.parentElement.removeChild(loadMoreButton)
     }
 })
